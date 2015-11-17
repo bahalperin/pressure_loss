@@ -1,0 +1,349 @@
+<head>
+  <title>static_pressure</title>
+</head>
+
+<body>
+    {{#if loggingIn}}
+    <div class="logging-in">
+        <h1 class="logging-in-text">Logging In...</h1>
+        <i class="fa fa-spinner fa-pulse fa-5x loading-spinner"></i>
+    </div>
+    {{else}}
+        {{#if currentUser}}
+        {{> navBar}}
+
+
+<div class="container">
+        <table class="path table">
+            <thead>
+                <tr>
+                    <td>Ordering</td>
+                    <td>Name</td>
+                    <td>Pressure Loss</td>
+                    <td>Area</td>
+                    <td>Velocity</td>
+                    <td>Flowrate</td>
+                    <td>Actions</td>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each chosenPathDuctwork}}
+                {{> ductRow}}
+                {{/each}}
+            </tbody>
+        </table>
+        <button class="create-excel btn"><i class="fa fa-download"></i></button>
+        <button class="add-duct btn"><i class="fa fa-plus"></i></button>
+</div>
+
+        {{#if showDuctForm}}
+            {{> ductForm}}
+            {{> ductSearch}}
+            {{> ductSearchResults}}
+        {{/if}}
+
+        {{#if showProjectForm}}
+        <div class="background">
+        </div>
+        <div class="panel panel-default add-project-form">
+            <div class="panel-heading"><h3 class="panel-title">Create a New Project</h3></div>
+            <div class="panel-body">
+                {{> insertProjectForm}}
+                <button class="cancel-add-project btn btn-default">Cancel</button>
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if showPathForm}}
+        <div class="background">
+        </div>
+        <div class="panel panel-default add-path-form">
+            <div class="panel-heading"><h3 class="panel-title">Create a New Path</h3></div>
+            <div class="panel-body">
+                {{> insertPathForm}}
+                <button class="cancel-add-path btn btn-default">Cancel</button>
+            </div>
+        </div>
+        {{/if}}
+
+       <!-- Not logged in or loggin in -->
+        {{else}}
+        <div class="login-page">
+            <h1>Static Pressure Calculator</h1>
+            {{> login}}
+            {{> register}}
+        </div>
+        {{/if}}
+    {{/if}}
+
+
+</body>
+
+<template name="ductForm">
+    <div class="background"></div>
+    <div class="panel panel-default duct-form {{#if isUpdate}}update{{/if}}">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                Add a {{chosenDuctType.name}}
+            </h3>
+            <button type="button" class="close duct-form-close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="panel-body">
+            {{#if chosenDuctType}}
+            {{> UI.dynamic template=chosenDuctType.template data=formData}}
+            {{/if}}
+        </div>
+    </div>
+</template>
+
+<template name="insertDuctForm">
+    {{> quickForm collection="Ducts" schema=ductSchema id="duct-form" type="insert"}}
+</template>
+
+<template name="ductRoundForm">
+    {{> quickForm collection="Ducts" schema="Schemas.DuctRound" id="duct-form" type=formMode doc=doc}}
+</template>
+
+<template name="ductRectangularForm">
+    {{> quickForm collection="Ducts" schema="Schemas.DuctRectangular" id="duct-form" type=formMode doc=doc}}
+</template>
+
+<template name="elbowRoundSmoothForm">
+    {{> quickForm collection="Ducts" schema="Schemas.ElbowRoundSmooth" id="duct-form" type=formMode doc=doc}}
+</template>
+
+<template name="elbowRoundGoredForm">
+    {{> quickForm collection="Ducts" schema="Schemas.ElbowRoundGored" id="duct-form" type=formMode doc=doc}}
+</template>
+
+<template name="insertProjectForm">
+    {{> quickForm collection="Projects" id="insertProjectForm" type="insert"}}
+</template>
+
+<template name="insertPathForm">
+    {{> quickForm collection="Paths" id="insertPathForm" type="insert"}}
+</template>
+
+<template name="ductSearch">
+    <input type="text" class="search-query form-control">
+</template>
+
+<template name="ductSearchResults">
+    <ul class="duct-options list-group">
+        {{#each filteredDucts}}
+        <li class="duct-option list-group-item">{{this.name}}</li>
+        {{/each}}
+    </ul>
+</template>
+
+<template name="updateDuctSearch">
+    <input type="text" class="update-search-query form-control">
+</template>
+
+<template name="updateDuctSearchResults">
+    <ul class="update-duct-options list-group">
+        {{#each filteredDucts}}
+        <li class="duct-option list-group-item">{{this.name}}</li>
+        {{/each}}
+    </ul>
+</template>
+
+<template name="connection">
+    <div class="connection">
+        {{#if diameter}}
+            <p>Diameter: {{diameter}}</p>
+        {{/if}}
+        {{#if width}}
+            <p>Width: {{width}}</p>
+        {{/if}}
+        {{#if height}}
+            <p>Height: {{height}}</p>
+        {{/if}}
+        {{#if hydraulicDiameter}}
+            <p> Hydraulic Diameter: {{hydralicDiameter}}</p>
+        {{/if}}
+        <p>Flowrate: {{flowrate}}</p>
+        <p>Velocity: {{velocity}}</p>
+        <p>Velocity Pressure: {{velocityPressure}}</p>
+        <p>Linear Pressure Loss: {{linearPressureLoss}}</p>
+    </div>
+</template>
+
+<template name="projectOption">
+    <li class="project-option {{#if isChosenProject}}chosen-project{{/if}}"><a href="#">{{name}}</a></li>
+</template>
+
+<template name="pathOption">
+    <li class="path-option {{#if isChosenPath}}chosen-path{{/if}}"><a href="#">{{name}}</a></li>
+</template>
+
+<template name="genericDuct">
+    <li class="list-group-item path-item {{#if selected}}chosen-duct{{/if}}">
+        <p>{{this.name}}</p>
+        <p>Pressure Loss: {{formattedProperties.pressureLoss}}</p>
+        {{#if selected}}
+        <button class="delete btn btn-danger">&times;</button>
+        <button class="edit btn"><i class="fa fa-pencil"></i></button>
+        {{/if}}
+    </li>
+</template>
+
+<template name="ductRow">
+    <tr class="duct-row">
+        <td>{{this.ordering}}</td>
+        <td>{{this.name}}</td>
+        <td>{{formattedProperties.pressureLoss}}</td>
+        <td>{{formattedProperties.area}}</td>
+        <td>{{formattedProperties.velocity}}</td>
+        <td>{{formattedProperties.flowrate}}</td>
+        <td>
+            <button class="delete btn btn-danger">&times;</button>
+            <button class="edit btn"><i class="fa fa-pencil"></i></button>
+        </td>
+    </tr>
+    <tr class="detail-view {{#unless isExpanded}}display-none{{/unless}}">
+        <td colspan="6">
+            <p>1</p>
+            <p>1</p>
+            <p>1</p>
+            <p>1</p>
+            <p>1</p>
+        </td>
+    </tr>
+</template>
+
+<template name="ductRound">
+    <li class="list-group-item path-item">
+        <p>{{this.name}}</p>
+        {{#with this.inlet}}
+            {{> connection}}
+        {{/with}}
+        <p>Length: {{length}}</p>
+        <p>Pressure Loss: {{pressureLoss}}</p>
+    </li>
+</template>
+
+<template name="ductRectangular">
+    <li class="list-group-item path-item">
+        <p>{{this.name}}</p>
+        {{#with this.inlet}}
+            {{> connection}}
+        {{/with}}
+        <p>Length: {{length}}</p>
+        <p>Pressure Loss: {{pressureLoss}}</p>
+    </li>
+</template>
+
+<template name="elbowRoundSmooth">
+    <li class="list-group-item path-item">
+        <p>{{this.name}}</p>
+        {{#with this.inlet}}
+            {{> connection}}
+        {{/with}}
+        <p>Bend Radius: {{bendRadius}}</p>
+        <p>R/D: {{bendRatio}}</p>
+        <p>Bend Angle: {{bendAngle}}</p>
+        <p>Pressure Loss: {{pressureLoss}}</p>
+    </li>
+</template>
+
+<template name="elbowRoundGored">
+    <li class="list-group-item path-item">
+        <p>{{this.name}}</p>
+        {{#with this.inlet}}
+            {{> connection}}
+        {{/with}}
+        <p>Number of Pieces: {{numberOfPieces}}</p>
+        <p>Bend Radius: {{bendRadius}}</p>
+        <p>R/D: {{bendRatio}}</p>
+        <p>Pressure Loss: {{pressureLoss}}</p>
+    </li>
+</template>
+
+<template name="login">
+    <form>
+        <input type="text" id="login-username">
+        <input type="password" id="login-password">
+        <input type="submit" value="Login">
+    </form>
+    <div class="error-message">{{errorMessage}}</div>
+</template>
+
+<template name="register">
+    <form>
+        <input type="text" id="register-first-name">
+        <input type="text" id="register-last-name">
+        <input type="text" id="register-username">
+        <input type="password" id="register-password">
+        <input type="submit" value="Register">
+    </form>
+    <div class="error-message">{{errorMessage}}</div>
+</template>
+
+<template name="navBar">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Static Pressure Calculator</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+             <p class="navbar-text">Project:</p>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{chosenProject.name}}<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                  <li class="add-project"><a href='#'>Create a new Project</a></li>
+                  <li class="divider" role="separator"></li>
+              {{#each projects}}
+                {{> projectOption}}
+                {{/each}}
+              </ul>
+            </li>
+            {{#if isProjectChosen}}
+             <p class="navbar-text">Path:</p>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{chosenPath.name}}<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                  <li class="add-path"><a href='#'>Create a new Path</a></li>
+                  <li class="divider" role="separator"></li>
+              {{#each projectPaths}}
+                {{> pathOption}}
+                {{/each}}
+              </ul>
+            </li>
+          {{/if}}
+          </ul>
+          {{#if isPathChosen}}
+          <p class="navbar-text">Pressure Loss: ({{chosenPathPressureLoss}})</p>
+          {{/if}}
+          <ul class="nav navbar-nav user-options">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{currentUser.profile.firstName}}<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#" class="logout">Log Out</a></li>
+              </ul>
+            </li>
+        </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+</template>
+
+<template name="pageDetails">
+    <div class="page-details">
+        <div>Project: {{chosenProject.name}}</div>
+        <div>Path: {{chosenPath.name}}</div>
+        <div>Pressure Loss: {{chosenPathPressureLoss}}</div>
+    </div>
+</template>
