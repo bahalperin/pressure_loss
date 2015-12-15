@@ -70,8 +70,16 @@
         {{else}}
         <div class="login-page">
             <h1>Static Pressure Calculator</h1>
-            {{> login}}
-            {{> register}}
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        {{> login}}
+                    </div>
+                    <div class="col-md-6">
+                        {{> register}}
+                    </div>
+                </div>
+            </div>
         </div>
         {{/if}}
     {{/if}}
@@ -116,6 +124,10 @@
 
 <template name="elbowRoundGoredForm">
     {{> quickForm collection="Ducts" schema="Schemas.ElbowRoundGored" id="duct-form" type=formMode doc=doc}}
+</template>
+
+<template name="elbowRoundMiteredForm">
+    {{> quickForm collection="Ducts" schema="Schemas.ElbowRoundMitered" id="duct-form" type=formMode doc=doc}}
 </template>
 
 <template name="insertProjectForm">
@@ -205,11 +217,9 @@
     </tr>
     <tr class="detail-view {{#unless isExpanded}}display-none{{/unless}}">
         <td colspan="6">
-            <p>1</p>
-            <p>1</p>
-            <p>1</p>
-            <p>1</p>
-            <p>1</p>
+			{{#each collapsedProperties}}
+			<p>{{key}}: {{value}}</p>
+			{{/each}}
         </td>
     </tr>
 </template>
@@ -263,23 +273,51 @@
 </template>
 
 <template name="login">
-    <form>
-        <input type="text" id="login-username">
-        <input type="password" id="login-password">
-        <input type="submit" value="Login">
-    </form>
-    <div class="error-message">{{errorMessage}}</div>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Log In</h3></div>
+        <div class="panel-body">
+        <form>
+            <fieldset class="form-group">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" class="form-control">
+            </fieldset>
+            <fieldset class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" class="form-control">
+            </fieldset>
+            <input type="submit" value="Login" class="btn btn-primary">
+        </form>
+        <div class="error-message">{{errorMessage}}</div>
+        </div>
+    </div>
 </template>
 
 <template name="register">
-    <form>
-        <input type="text" id="register-first-name">
-        <input type="text" id="register-last-name">
-        <input type="text" id="register-username">
-        <input type="password" id="register-password">
-        <input type="submit" value="Register">
-    </form>
-    <div class="error-message">{{errorMessage}}</div>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Register</h3></div>
+        <div class="panel-body">
+        <form>
+            <fieldset class="form-group">
+                <label for="register-first-name">First Name</label>
+                <input type="text" id="register-first-name" class="form-control">
+            </fieldset>
+            <fieldset class="form-group">
+                <label for="register-last-name">Last Name</label>
+                <input type="text" id="register-last-name" class="form-control">
+            </fieldset>
+            <fieldset class="form-group">
+                <label for="register-username">Username</label>
+                <input type="text" id="register-username" class="form-control">
+            </fieldset>
+            <fieldset class="form-group">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" class="form-control">
+            </fieldset>
+            <input type="submit" value="Register" class="btn btn-primary">
+        </form>
+        <div class="error-message">{{errorMessage}}</div>
+        </div>
+    </div>
 </template>
 
 <template name="navBar">

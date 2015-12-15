@@ -8,7 +8,7 @@ AutoForm.debug();
 Session.set("showPathForm", false);
 Session.set("formMode", "insert");
 
-AutoForm.addHooks('add-path-form', {
+AutoForm.addHooks('insertPathForm', {
     before: {
         insert: function(doc) {
             if (Session.get("chosenProject")) {
@@ -64,9 +64,6 @@ AutoForm.addHooks('duct-form', {
         },
     },
     after: {
-        insert: function(doc) {
-            Session.set("showDuctForm", false);
-        },
         update: function(modifier) {
             Session.set("showDuctForm", false);
             Session.set("formMode", "insert");
@@ -80,30 +77,7 @@ Template.body.helpers({
         var path = Session.get("chosenPath");
         if (path) {
             return Ducts.find({pathID: path._id}, {sort: [["createdAt", "asc"]]}).map(function(doc, i) {
-                var ductKeys = _.keys(doc);
-                var inletKeys = _.keys(doc.inlet);
-                var filteredDuctKeys = _.filter(ductKeys, function(key) {
-                    return _.isNumber(doc[key]);
-                });
-                doc.formattedProperties = {};
-                _.each(filteredDuctKeys, function(key) {
-                    var value = doc[key];
-                    if (_.isInteger(value)) {
-                        doc.formattedProperties[key] = value.toString();
-                    }
-                    else {
-                        doc.formattedProperties[key] = s.numberFormat(value, 2);
-                    }
-                });
-                _.each(inletKeys, function(key) {
-                    var value = doc.inlet[key];
-                    if (_.isInteger(value)) {
-                        doc.formattedProperties[key] = value.toString();
-                    }
-                    else {
-                        doc.formattedProperties[key] = s.numberFormat(value, 2);
-                    }
-                });
+                doc.formattedProperties = HVAC.formatProperties(doc);
                 doc.ordering = i;
                 return doc;
             });
@@ -270,6 +244,35 @@ Template.ductRow.helpers({
     },
     isExpanded: function() {
         return Session.equals("expandedRow", this._id);
+    },
+    collapsedProperties: function() {
+        if (Session.get("chosenDuct")) {
+            var duct = Session.get("chosenDuct");
+			var formattedProperties = HVAC.formatProperties(duct);
+			var rowProperties = {
+				ordering: 1,
+				name: 1,
+				pressureLoss: 1,
+				area: 1,
+				velocity: 1,
+				flowrate: 1
+			};
+
+			var collapsedProperties = _.chain(formattedProperties)
+				.pairs()
+				.map(function(pair) {
+					return {
+						key: pair[0],
+						value: pair[1]
+					};
+				})
+				.filter(function(pair) {
+					return !rowProperties[pair.key];
+				})
+				.value();
+
+			return collapsedProperties;
+        }
     }
 });
 
@@ -365,11 +368,9 @@ Template.register.events({
             }, function(error) {
                 if (error) {
                     Session.set('UserRegisterError', error.reason);
-                    console.log(error);
                 }
                 else {
                     Session.set('UserRegisterError', '');
-                    console.log('SUCCESS!!!');
                 }
             });
         }

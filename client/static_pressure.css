@@ -1,0 +1,143 @@
+/* CSS declarations go here */
+.display-none {
+    display: none;
+
+}
+
+.duct-form {
+    position: absolute;
+    top: 50px;
+    right: 200px;
+    width: 400px;
+    height: 80%;
+    z-index: 3000;
+
+}
+
+.duct-form-close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+
+}
+
+.all-projects {
+    position: absolute;
+    bottom: 25px;
+    left: 0;
+    width: 200px;
+    overflow-y: scroll;
+    list-style-type: none;
+
+}
+
+.project-paths {
+    padding-left: 25px;
+    list-style-type: none;
+
+}
+
+.path-ductwork:hover,
+.duct-option:hover,
+.path-item:hover {
+    background: #ddd;
+
+}
+
+.search-query {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 200px;
+    z-index: 3000;
+
+}
+
+.duct-options {
+    position: absolute;
+    top: 100px;
+    right: 0;
+    width: 200px;
+    z-index: 3000;
+    list-style-type: none;
+
+}
+
+.add-project-form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 900;
+    opacity: 1;
+    width: 80%;
+    height: 80%;
+
+}
+
+.add-path-form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 900;
+    opacity: 1;
+
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ddd;
+    z-index: 500;
+    opacity: 0.5;
+
+}
+
+.logging-in {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: inline;
+
+}
+
+.logging-in-text {
+    display: inline;
+    padding: 10px;
+
+}
+
+.loading-spinner {
+    display: inline;
+
+}
+
+.chosen-project,
+.chosen-path,
+.chosen-duct {
+    background: blue;
+
+}
+
+.create-excel {
+    width: 200px;
+
+}
+
+.navbar {
+    width: 100%;
+
+}
+
+.user-options {
+    float: right;
+}
+
+.page-details {
+
+}

@@ -39,6 +39,19 @@ var ductTypes = [
             {"numberOfPieces": 5, "bendRatio": 1.5, "lossCoefficient": 0.24},
             {"numberOfPieces": 5, "bendRatio": 2.0, "lossCoefficient": 0.19}
         ]
+    },
+    {
+        "class": "elbow",
+        "shape": "round",
+        "type": "mitered",
+        "table": [
+            {"bendAngle": 20, "lossCoefficient": 0.08},
+            {"bendAngle": 30, "lossCoefficient": 0.16},
+            {"bendAngle": 45, "lossCoefficient": 0.34},
+            {"bendAngle": 60, "lossCoefficient": 0.55},
+            {"bendAngle": 75, "lossCoefficient": 0.81},
+            {"bendAngle": 90, "lossCoefficient": 1.2}
+        ]
     }
 ];
 

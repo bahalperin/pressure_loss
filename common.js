@@ -210,6 +210,24 @@ Schemas.ElbowRoundGored = new SimpleSchema([
     Schemas.BaseDuct
 ]);
 
+Schemas.ElbowRoundMitered = new SimpleSchema([
+    {
+        inlet: {
+            type: Schemas.ConnectionRound,
+            label: "Inlet"
+        },
+        bendAngle: {
+            type: Number,
+            allowedValues: [20, 30, 45, 60, 75, 90],
+            label: "Bend Angle",
+            autoform: {
+                defaultValue: 90
+            }
+        }
+    },
+    Schemas.BaseDuct
+]);
+
 DuctTypes = new Mongo.Collection("ductTypes");
 
 Ducts = new Mongo.Collection("ducts", {
